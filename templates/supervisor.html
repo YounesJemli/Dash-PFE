@@ -1,0 +1,229 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Manage Projects</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css'>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <style>
+        .home-section, .user-section {
+            display: none; /* Cacher par défaut */
+        }
+        .home-section.active, .user-section.active {
+            display: block; /* Afficher la section active */
+        }
+        .process-container {
+    display: flex;
+    flex-direction: column; /* Aligne les boutons verticalement */
+    align-items: center; /* Centre les boutons horizontalement */
+    gap: 20px; /* Espace entre les boutons */
+}
+
+.process-button {
+    background-color: #ffffff;
+    border: 2px solid #e0e0e0;
+    border-radius: 5px;
+    display: flex;
+    align-items: center; /* Centre le contenu verticalement */
+    padding: 10px 20px;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s ease;
+    width: 400px; /* Largeur des boutons */
+    margin: 0; /* Réduit la marge entre les boutons */
+    text-align: center; /* Centre le texte sous les logos */
+}
+
+.process-button img.logo,
+.process-button img.logo1 {
+    width: 25px; /* Taille des logos (ou ajustez en fonction de la classe) */
+    height: auto;
+    margin-right: 15px; /* Espacement entre le logo et le texte */
+}
+
+.process-button span {
+    font-size: 16px;
+    font-weight: 600;
+    color: #333333;
+    display: block; /* Assure que le texte est affiché en bloc pour le centrer */
+    text-align: center; /* Centre le texte horizontalement */
+}
+.containerr{
+    margin-left: 25px;
+}
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="logo-details">
+            <img src="{% static 'img/image.png' %}" class="logo-photo" id="logo" alt="Logo"/>
+            <div class="logo_name">3S</div>
+        </div>
+        <ul class="nav-list">
+            
+            <li>
+                <a href="#" id="serNav" class="nav-link active">
+                    <i class="fas fa-cogs"></i>
+                    <span class="links_name">Services</span>
+                </a>
+                <span class="tooltip">Services</span>
+            </li>
+            <li>
+                <a href="#" id="userNav" class="nav-link">
+                    <i class='bx bx-user'></i>
+                    <span class="links_name">User</span>
+                </a>
+                <span class="tooltip">User</span>
+            </li>
+            <li>
+                <a href="{% url 'logout' %}" class="nav-link logout-link" id="logoutNav" style="margin-top: 100px;">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span class="links_name">Logout</span>
+                </a>
+                <span class="tooltip">Logout</span>
+            </li>
+            <!-- Add more navigation links as needed -->
+        </ul>
+    </div>
+
+    <div class="home-section" id="userSection">
+        <div class="container-fluid">
+
+        <ul class="nav" id="myTab" role="tablist" >
+            <li class="nav-item" style="margin-top: 30px;" >
+            <a class="btn-custom active" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="true">Profile</a>
+        </li>
+        <li class="nav-item" style="margin-top: 30px;">
+            <a class="btn-custom" id="change-profile-tab" data-toggle="tab" href="#change-profile" role="tab" aria-controls="change-profile" aria-selected="false">Change Profile</a>
+        </li>
+        <li class="nav-item" style="margin-top: 30px;">
+            <a class="btn-custom" id="change-password-tab" data-toggle="tab" href="#change-password" role="tab" aria-controls="change-password" aria-selected="false">Change Password</a>
+        </li>
+    </ul>
+
+    <div class="tab-content card" id="myTabContent" style="margin-top: 30px;" >
+        <div class="tab-pane fade show active" id="profile" style="margin-left: 10px; margin-right: 10px; margin-top: 10px ; margin-block-end: 10px;" role="tabpanel" aria-labelledby="profile-tab">
+                    <p><strong>Username:</strong> {{ user.username }}</p>
+                    <p><strong>E-mail:</strong> {{ user.email }}</p>
+                    <p><strong>Role:</strong> {{ user.role }}</p>
+                </div>
+                <div class="tab-pane fade" id="change-profile" style="margin-left: 10px; margin-right: 10px; margin-top: 10px ; margin-block-end: 10px;" role="tabpanel" aria-labelledby="change-profile-tab">
+                    <form method="post" action="{% url 'supervisor' %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="update_profile" value="1">
+                        <div class="form-group">
+                            <label for="email">New E-mail:</label>
+                            <input type="email" class="form-control" id="email" name="email" value="{{ user.email }}" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="username">Username:</label>
+                            <input type="text" class="form-control" id="username" name="username" value="{{ user.username }}" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="role">Role:</label>
+                            <select class="form-control" id="role" name="role" required disabled>
+                                <option value="admin" {% if user.role == 'admin' %}selected{% endif %}>Admin</option>
+                                <option value="developer" {% if user.role == 'developer' %}selected{% endif %}>Developer</option>
+                                <option value="devops" {% if user.role == 'devops' %}selected{% endif %}>Devops</option>
+                                <option value="supervisor" {% if user.role == 'supervisor' %}selected{% endif %}>Supervisor</option>
+                            </select>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-custom">Update Profile</button>
+                    </form>
+                </div>
+                <div class="tab-pane fade" id="change-password" role="tabpanel" style="margin-left: 10px; margin-right: 10px; margin-top: 10px ; margin-block-end: 10px;" aria-labelledby="change-password-tab">
+                    <form method="post" action="{% url 'supervisor' %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="update_password" value="1">
+                        <div class="form-group">
+                            <label for="current-password">Current Password:</label>
+                            <input type="password" class="form-control" id="current-password" name="current_password" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="new-password">New Password:</label>
+                            <input type="password" class="form-control" id="new-password" name="new_password" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="confirm-password">Confirm New Password:</label>
+                            <input type="password" class="form-control" id="confirm-password" name="confirm_password" required>
+                        </div>
+                        <button type="submit" class="btn btn-custom">Change Password</button>
+                    </form>
+                </div>
+            </div>
+        </div>   
+    </div>
+    
+    
+    <div id="serviceSection" class="home-section active">
+        <div class="text">Your services</div>
+
+
+            
+        <div class="services-section">
+            <div class="containerr">
+                {% for service in services %}
+                    <a href="{{ service.url }}" target="_blank">
+                        <div class="process-button">
+                            <img src="{{ service.image.url }}" class="logo" alt="{{ service.nom }}" />
+                            <span>{{ service.nom }}</span>
+                        </div>
+                    </a>
+                {% endfor %}
+            </div>
+        </div><div class="services-section">
+            <div class="containerr">
+                {% for service in services %}
+                    <a href="{{ service.url }}" target="_blank">
+                        <div class="process-button">
+                            <img src="{{ service.image.url }}" class="logo" alt="{{ service.nom }}" />
+                            <span>{{ service.nom }}</span>
+                        </div>
+                    </a>
+                {% endfor %}
+            </div>
+        </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Function to handle navigation
+            function handleNavClick(targetSectionId, activeLinkId) {
+                // Hide all sections
+                $('#userSection , #serviceSection').removeClass('active');
+        
+                // Show the target section
+                $(targetSectionId).addClass('active');
+        
+                // Remove active class from all nav links
+                $('.nav-link').removeClass('active');
+        
+                // Add active class to the clicked nav link
+                $(activeLinkId).addClass('active');
+            }
+        
+            
+        
+            $('#userNav').on('click', function() {
+                handleNavClick('#userSection', '#userNav');
+            });
+            $('#serNav').on('click', function() {
+                handleNavClick('#serviceSection', '#serNav');
+            });
+        
+               $('#serNav').click();
+        });
+        
+       
+    </script>
+</body>
+</html>
+
+

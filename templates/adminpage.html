@@ -1,0 +1,592 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Page</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/js/bootstrap.bundle.min.js"></script>
+
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+    <style>
+      .project-card {
+        margin-bottom: 20px;
+      }
+      .btn-custom {
+        background-color: #007bff;
+        color: white;
+      }
+      .home-section {
+        position: relative;
+        background: #e4e9f7;
+        min-height: 100vh;
+        top: 0;
+        left: 78px;
+        width: calc(100% - 78px);
+        transition: all 0.5s ease;
+        display: none; /* Initialement caché */
+      }
+      .home-section.active {
+        display: block; /* Affiche la section lorsqu'elle est active */
+      }
+      .process-container {
+    display: flex;
+    flex-direction: column; /* Aligne les boutons verticalement */
+    align-items: center; /* Centre les boutons horizontalement */
+    gap: 20px; /* Espace entre les boutons */
+}
+
+.process-button {
+    background-color: #ffffff;
+    border: 2px solid #e0e0e0;
+    border-radius: 5px;
+    display: flex;
+    align-items: center; /* Centre le contenu verticalement */
+    padding: 10px 20px;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s ease;
+    width: 400px; /* Largeur des boutons */
+    margin: 0; /* Réduit la marge entre les boutons */
+    text-align: center; /* Centre le texte sous les logos */
+}
+
+.process-button img.logo,
+.process-button img.logo1 {
+    width: 25px; /* Taille des logos (ou ajustez en fonction de la classe) */
+    height: auto;
+    margin-right: 15px; /* Espacement entre le logo et le texte */
+}
+
+.process-button span {
+    font-size: 16px;
+    font-weight: 600;
+    color: #333333;
+    display: block; /* Assure que le texte est affiché en bloc pour le centrer */
+    text-align: center; /* Centre le texte horizontalement */
+}
+.containerr{
+    margin-left: 25px;
+}
+/* Style for the card container */
+.user-card {
+    margin-left: 10px;
+    margin-right: 20px;
+}
+
+/* Style for the table */
+.table-user {
+    width: 95%;
+    table-layout: fixed; /* Ensure columns have fixed width */
+    border-collapse: collapse; /* Ensure no extra spacing between borders */
+}
+
+/* Style for table headers and cells */
+.table-user th, 
+.table-user td {
+    padding: 5px; /* Reduce padding for minimal space */
+    font-size: 14px; /* Decrease text size */
+    text-align: center; /* Center-align text */
+    white-space: nowrap; /* Prevent text from wrapping to new lines */
+    overflow: hidden; /* Hide overflowing text */
+    text-overflow: ellipsis; /* Show ellipsis for overflowing text */
+}
+
+/* Style for table headers */
+.table-user th {
+    font-weight: bold; /* Make header text bold */
+    background-color: #f8f9fa; /* Optional: Set a light background color for headers */
+}
+
+/* Style for table cells */
+.table-user td {
+    background-color: #ffffff; /* Optional: Set a background color for cells */
+}
+
+/* Ensure the table doesn’t overflow its container */
+.table-user-wrapper {
+    overflow-x: auto; /* Add horizontal scroll if needed */
+    -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+}
+
+    </style>
+  </head>
+  <body>
+    <div class="sidebar">
+      <div class="logo-details">
+        <img
+          src="{% static 'img/image.png' %}"
+          class="logo-photo"
+          id="logo"
+          alt="Logo"
+        />
+        <div class="logo_name">3S</div>
+      </div>
+      <ul class="nav-list">
+        <li>
+          <a href="#" id="pipeNav" class="nav-link active">
+            <strong><i class="fa-brands fa-jenkins"></i></strong>
+            <span class="links_name">Manage Pipelines</span>
+          </a>
+          <span class="tooltip">Manage Pipelines</span>
+        </li>
+        <li>
+          <a href="#" id="projectNav" class="nav-link">
+            <i class="bx bx-menu menu-icon"></i>
+            <span class="links_name">Manage Projects</span>
+          </a>
+          <span class="tooltip">Manage Projects</span>
+        </li>
+        <li>
+          <a href="#" id="serNav" class="nav-link">
+            <i class="fas fa-cogs"></i>
+            <span class="links_name">Services</span>
+          </a>
+          <span class="tooltip">Services</span>
+        </li>
+        <li>
+          <a href="#" id="userNav" class="nav-link">
+            <i class="bx bx-user"></i>
+            <span class="links_name">User</span>
+          </a>
+          <span class="tooltip">User</span>
+        </li>
+        <li>
+          <a href="{% url 'logout' %}" class="nav-link logout-link" id="logoutNav" style="margin-top: 100px;">
+              <i class="fas fa-sign-out-alt"></i>
+              <span class="links_name">Logout</span>
+          </a>
+          <span class="tooltip">Logout</span>
+      </li>
+        <!-- Add more navigation links as needed -->
+      </ul>
+    </div>
+
+
+    <div class="scrollable-container">
+        <div class="home-section " id="pipelineSection">
+          <div class="text">Pipeline List</div>
+          <div class="col-12">
+                <!-- Boucle pour afficher les pipelines -->
+                {% for pipeline in pipelines %}
+          <div class="card project-card">
+              <div class="card-header project-card-header">
+                  {{ pipeline.name }}    
+              </div>
+              <div class="card-body project-card-body">
+                  <div class="build-status mt-3">
+                      <strong>Build Status:</strong>
+                      <span id="build-status-{{ pipeline.name }}" class="badge badge-secondary">Loading...</span>
+                  </div>
+                  <form method="post">
+                      {% csrf_token %}
+                      <input type="hidden" name="pipeline_url" value="{{ pipeline.url }}">
+                      
+                      <a href="#" class="btn-custom btn-custom-console" data-pipeline-name="{{ pipeline.name }}">Console</a>
+                      
+                  </form>
+              </div>
+          </div>
+
+                      
+
+
+            <!-- Modal Structure -->
+            <div class="modal fade" id="logModal" tabindex="-1" role="dialog" aria-labelledby="logModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="logModalLabel">Pipeline Build Logs</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body" id="logModalBody">
+                            <!-- Logs will be injected here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+{% endfor %}
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    const pipelines = document.querySelectorAll('.card.project-card');
+                    
+                    pipelines.forEach(function(pipeline) {
+                        const pipelineName = pipeline.querySelector('.btn-custom-console').getAttribute('data-pipeline-name');
+                        const statusElement = document.getElementById(`build-status-${pipelineName}`);
+                        const url = `{% url 'jenkins_build_logs' 'pipelineName' %}`.replace('pipelineName', pipelineName);
+                
+                        // Fetch build status
+                        fetch(url)
+                            .then(response => response.json())
+                            .then(data => {
+                                // Update status badge
+                                if (data.build_status === 'SUCCESS') {
+                                    statusElement.className = 'badge badge-success';
+                                    statusElement.textContent = 'SUCCESS';
+                                } else if (data.build_status === 'FAILURE') {
+                                    statusElement.className = 'badge badge-danger';
+                                    statusElement.textContent = 'FAILURE';
+                                } else if (data.build_status === 'IN_PROGRESS') {
+                                    statusElement.className = 'badge badge-warning';
+                                    statusElement.textContent = 'IN_PROGRESS';
+                                } else {
+                                    statusElement.className = 'badge badge-secondary';
+                                    statusElement.textContent = data.build_status || 'UNKNOWN';
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error fetching build status:', error);
+                                statusElement.className = 'badge badge-secondary';
+                                statusElement.textContent = 'ERROR';
+                            });
+                    });
+                });
+                </script>
+                
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    document.querySelectorAll('.btn-custom-console').forEach(function(button) {
+                        button.addEventListener('click', function(event) {
+                            event.preventDefault(); // Prevent the default action of the link
+                            const pipelineName = this.getAttribute('data-pipeline-name');
+                            const url = `{% url 'jenkins_build_logs' 'pipelineName' %}`.replace('pipelineName', pipelineName);
+            
+                            // Make AJAX request
+                            fetch(url)
+                                .then(response => response.json())
+                                .then(data => {
+                                    // Populate modal with build logs
+                                    document.getElementById('logModalLabel').textContent = 'Build Logs for Pipeline: ' + pipelineName;
+                                    document.getElementById('logModalBody').innerHTML = `
+                                        <p>Build Status: ${data.build_status || 'Unknown'}</p>
+                                        <h2>Build Logs:</h2>
+                                        <pre>${data.build_logs || 'No logs available'}</pre>
+                                    `;
+                                    // Show the modal
+                                    $('#logModal').modal('show');
+                                })
+                                .catch(error => {
+                                    console.error('Error fetching build logs:', error);
+                                });
+                        });
+                    });
+                });
+            </script>
+
+
+        </div>
+        </div>
+
+        <div class="home-section" id="projectSection">
+          <div class="text">Project List</div>
+
+          {% for project in projects %}
+          <!-- Project Card -->
+          <div class="col-12">
+              <div class="card project-card">
+                  <div class="card-header project-card-header">
+                      <h5>{{ project.name }}</h5>
+                      <span class="badge 
+                          {% if project.status == 'In Progress' %}
+                              badge-warning
+                          {% elif project.status == 'Completed' %}
+                              badge-success
+                          {% elif project.status == 'On Hold' %}
+                              badge-secondary
+                          {% endif %}
+                      ">{{ project.status }}</span>
+                  </div>
+                  <div class="card-body project-card-body">
+                      <div>
+                          <p><strong>Url Github:</strong> {{ project.github_url }}</p>
+                      </div>
+                      
+                  </div>
+              </div>
+          </div>
+          {% endfor %}
+      </div>
+
+
+    <div id="userSection" class="home-section active">
+        <div class="text">Manage Users</div>
+        <button class="btn-custom float-right " data-bs-toggle="modal" style="margin-top: 10px;" data-toggle="modal" data-target="#addUserModal">Add User</button>
+        <div class="card user-card">
+            <!-- Table Wrapper -->
+            <div class="table-user-wrapper">
+                <!-- Table -->
+                <table class="table table-user table-bordered mt-3">
+                    <thead>
+                        <tr>
+                            <th>Username</th>
+                            <th>Email</th>
+                            <th>Role</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in users %}
+                        <tr>
+                            <td>{{ user.username }}</td>
+                            <td>{{ user.email }}</td>
+                            <td>{{ user.role }}</td>
+                            <td>
+                                <form action="{% url 'adminpage' %}" method="post" class="d-inline">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="user_id" value="{{ user.id }}">
+                                    <button type="submit" name="toggle_status" class="btn-custom btn-{{ user.is_active|yesno:'warning,success' }}">
+                                        {{ user.is_active|yesno:"Deactivate,Activate" }}
+                                    </button>
+                                </form>
+                            </td>
+                            <td>
+                                <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#deleteUserModal{{ user.id }}">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </td>
+                        </tr>
+                <!-- View Profile Modal -->
+                <div class="modal fade" id="viewProfileModal{{ user.id }}" tabindex="-1" role="dialog" aria-labelledby="viewProfileModalLabel{{ user.id }}" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="viewProfileModalLabel{{ user.id }}">User Profile</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">×</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <p><strong>Username:</strong> {{ user.username }}</p>
+                                <p><strong>Email:</strong> {{ user.email }}</p>
+                                <p><strong>Role:</strong> {{ user.role }}</p>
+                                <p><strong>Status:</strong> {{ user.is_active|yesno:"Active,Inactive" }}</p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Delete User Modal -->
+                <div class="modal fade" id="deleteUserModal{{ user.id }}" tabindex="-1" role="dialog" aria-labelledby="deleteUserModalLabel{{ user.id }}" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="deleteUserModalLabel{{ user.id }}">Confirm Deletion</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">×</span>
+                                </button>
+                            </div>
+                            <form action="{% url 'adminpage' %}" method="post">
+                                {% csrf_token %}
+                                <input type="hidden" name="user_id" value="{{ user.id }}">
+                                <div class="modal-body">
+                                    <p>Are you sure you want to delete <strong>{{ user.username }}</strong>?</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                    <button type="submit" name="delete_user" class="btn btn-danger">Delete</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                {% endfor %}
+            </tbody>
+        </table>
+        </div> 
+        </div>
+
+
+        <!-- Add User Modal -->
+    <div class="modal fade" id="addUserModal" tabindex="-1" role="dialog" aria-labelledby="addUserModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+          <div class="modal-content">
+              <div class="modal-header">
+                  <h5 class="modal-title" id="addUserModalLabel">Add User</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">×</span>
+                  </button>
+              </div>
+              <form action="{% url 'adminpage' %}" method="post">
+                  {% csrf_token %}
+                  <div class="modal-body">
+                      <div class="form-group">
+                          <label for="username">Username</label>
+                          <input type="text" class="form-control" id="username" name="username" required>
+                      </div>
+                      <div class="form-group">
+                          <label for="email">Email address</label>
+                          <input type="email" class="form-control" id="email" name="email" required>
+                      </div>
+                      <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" class="form-control" id="password" name="password" required>
+                    </div>
+                      <div class="form-group">
+                          <label for="role">Role</label>
+                          <select class="form-control" id="role" name="role" required>
+                            <option value="admin" {% if user.role == 'admin' %}selected{% endif %}>Admin</option>
+                            <option value="developer" {% if user.role == 'developer' %}selected{% endif %}>Developer</option>
+                            <option value="devops" {% if user.role == 'devops' %}selected{% endif %}>Devops</option>
+                            <option value="supervisor" {% if user.role == 'supervisor' %}selected{% endif %}>Supervisor</option>
+
+                        </select>
+                      </div>
+                  </div>
+                  <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                      <button type="submit" name="add_user" class="btn btn-primary">Add User</button>
+                  </div>
+              </form>
+          </div>
+      </div>
+    </div>
+
+        </div>
+
+    
+    <div id="serviceSection" class="home-section">
+      <div class="text">Manage Services</div>
+      <button class="btn-custom float-right " data-bs-toggle="modal" style="margin-top: 10px;"  data-bs-target="#addServiceModal">
+          Add Service
+        </button>
+          <div class="services-section">
+              <div class="containerr">
+                  {% for service in services %}
+                  <div class="service-item" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px;">
+                      <!-- Lien vers le service -->
+                      <a href="{{ service.url }}" target="_blank" style="flex-grow: 1; text-decoration: none;">
+                          <div class="process-button" style="display: flex; align-items: center; justify-content: space-between; width: 50%;">
+                              <div style="display: flex; align-items: center;">
+                                  <img src="{{ service.image.url }}" class="logo" alt="{{ service.nom }}" style="margin-right: 10px;" />
+                                  <span>{{ service.nom }}</span>
+                              </div>
+                              <!-- Formulaire de suppression -->
+                              <form method="post" action="" class="delete-form" style="margin-left: 10px;">
+                                  {% csrf_token %}
+                                  <input type="hidden" name="service_id" value="{{ service.id }}">
+                                  <button type="submit" name="delete_service" class="btn btn-danger btn-sm" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce service ?');">
+                                      <i class="fas fa-trash-alt"></i>
+                                  </button>
+                              </form>
+                          </div>
+                      </a>
+                  </div>
+                  {% endfor %}
+              </div>
+          </div>
+      </div>
+      
+      
+      
+         <!-- Modal -->
+         <div class="modal fade" id="addServiceModal" tabindex="-1" role="dialog" aria-labelledby="addServiceModalLabel" aria-hidden="true">
+          <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                  <div class="modal-header">
+                      <h5 class="modal-title" id="addServiceModalLabel">Add New Service</h5>
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                      </button>
+                  </div>
+                  <form method="post" enctype="multipart/form-data" action="{% url 'adminpage' %}">
+                      {% csrf_token %}
+                      <div class="modal-body">
+                          <div class="form-group">
+                              <label for="nom">Nom:</label>
+                              <input type="text" id="nom" name="nom" class="form-control" required>
+                          </div>
+                          <div class="form-group">
+                              <label for="image">Image:</label>
+                              <input type="file" id="image" name="image" class="form-control-file" required>
+                          </div>
+                          <div class="form-group">
+                              <label for="url">URL:</label>
+                              <input type="url" id="url" name="url" class="form-control" required>
+                          </div>
+                          <div class="form-group">
+                              <label for="role">Role:</label>
+                              <select id="role" name="role" class="form-control" required>
+                                  <option value="admin">Admin</option>
+                                  <option value="developer">Developer</option>
+                                  <option value="devops">DevOps</option>
+                                  <option value="supervisor">Supervisor</option>
+                              </select>
+                          </div>
+                      </div>
+                      <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                          <button type="submit" name="add_service" class="btn btn-primary">Save changes</button>
+                      </div>
+                  </form>
+              </div>
+          </div>
+      </div>
+
+
+     
+
+    
+
+   
+    
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+      $(document).ready(function() {
+          // Function to handle navigation
+          function handleNavClick(targetSectionId, activeLinkId) {
+              // Hide all sections
+              $('#pipelineSection, #userSection, #projectSection , #serviceSection').removeClass('active');
+      
+              // Show the target section
+              $(targetSectionId).addClass('active');
+      
+              // Remove active class from all nav links
+              $('.nav-link').removeClass('active');
+      
+              // Add active class to the clicked nav link
+              $(activeLinkId).addClass('active');
+          }
+      
+          $('#pipeNav').on('click', function() {
+              handleNavClick('#pipelineSection', '#pipeNav');
+          });
+      
+          $('#userNav').on('click', function() {
+              handleNavClick('#userSection', '#userNav');
+          });
+      
+          $('#projectNav').on('click', function() {
+              handleNavClick('#projectSection', '#projectNav');
+          });
+          $('#serNav').on('click', function() {
+              handleNavClick('#serviceSection', '#serNav');
+          });
+      
+          // Optionally, trigger a click on the default link to show the default section
+          $('#pipeNav').click();
+      });
+      
+  </script>
+  </body>
+</html>

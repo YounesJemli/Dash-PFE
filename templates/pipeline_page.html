@@ -1,0 +1,564 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Manage Pipelines</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css'>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <style>
+        .sidebar .nav-list li.logout {
+    margin-top: auto; /* Pousse le logo de déconnexion vers le bas */
+}
+
+.sidebar .nav-list li.logout a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+}
+
+.sidebar .nav-list li.logout a i {
+    margin-right: 10px;
+}
+
+.sidebar .nav-list li.logout span.links_name {
+    display: none; /* Masquer le texte si vous le souhaitez */
+}
+
+.sidebar .nav-list li.logout:hover span.tooltip {
+    display: block;
+}
+
+        .scrollable-container {
+            max-height: 1000px; /* Set the maximum height of the container */
+            overflow-y: auto;  /* Enable vertical scrolling */
+            overflow-x: hidden; /* Hide horizontal scrolling (if not needed) */
+        }
+        .project-card {
+            margin-bottom: 20px; /* Adjust this value to increase space between cards */
+        }
+        .btn-custom {
+            background-color: #007bff;
+            color: white;
+        }
+        .home-section, .userpip-section {
+            display: none;
+        }
+        .home-section.active, .userpip-section.active {
+            display: block;
+        }
+        .process-container {
+    display: flex;
+    flex-direction: column; /* Aligne les boutons verticalement */
+    align-items: center; /* Centre les boutons horizontalement */
+    gap: 20px; /* Espace entre les boutons */
+}
+
+.process-button {
+    background-color: #ffffff;
+    border: 2px solid #e0e0e0;
+    border-radius: 5px;
+    display: flex;
+    align-items: center; /* Centre le contenu verticalement */
+    padding: 10px 20px;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s ease;
+    width: 400px; /* Largeur des boutons */
+    margin: 0; /* Réduit la marge entre les boutons */
+    text-align: center; /* Centre le texte sous les logos */
+}
+
+.process-button img.logo,
+.process-button img.logo1 {
+    width: 25px; /* Taille des logos (ou ajustez en fonction de la classe) */
+    height: auto;
+    margin-right: 15px; /* Espacement entre le logo et le texte */
+}
+
+.process-button span {
+    font-size: 16px;
+    font-weight: 600;
+    color: #333333;
+    display: block; /* Assure que le texte est affiché en bloc pour le centrer */
+    text-align: center; /* Centre le texte horizontalement */
+}
+
+
+                .console-output {
+                    white-space: pre-wrap; /* Préserve les sauts de ligne et les espaces */
+                    font-family: monospace; /* Utilise une police à espacement fixe pour les journaux */
+                    background-color: #f0f0f0; /* Couleur de fond claire pour la console */
+                    padding: 10px; /* Ajoute de l'espace autour du texte */
+                    border: 1px solid #ddd; /* Bordure légère autour de la console */
+                    overflow: auto; /* Ajoute des barres de défilement si le texte est trop long */
+                    max-height: 400px; /* Hauteur maximale de la boîte de dialogue */
+                }
+                .containerr{
+    margin-left: 25px;
+}
+          
+        
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <div class="logo-details">
+            <img src="{% static 'img/image.png' %}" class="logo-photo" id="logo" alt="Logo"/>
+            <div class="logo_name">3S</div>
+        </div>
+        <ul class="nav-list">
+            <li>
+                <a href="#" id="pipeNav" class="nav-link active">
+                    <strong><i class="fa-brands fa-jenkins"></i></strong>
+                    <span class="links_name">Manage Pipelines</span>
+                </a>
+                <span class="tooltip">Manage Pipelines</span>
+            </li>
+            <li>
+                <a href="#" id="projectNav" class="nav-link">
+                    <i class='bx bx-menu menu-icon'></i>
+                    <span class="links_name">Manage Projects</span>
+                </a>
+                <span class="tooltip">Manage Projects</span>
+            </li>
+            <li>
+                <a href="#" id="serNav" class="nav-link">
+                    <i class="fas fa-cogs"></i>
+                    <span class="links_name">Services</span>
+                </a>
+                <span class="tooltip">Services</span>
+            </li>
+            <li>
+                <a href="#" id="userpipNav" class="nav-link">
+                    <i class='bx bx-user'></i>
+                    <span class="links_name">User</span>
+                </a>
+                <span class="tooltip">User</span>
+            </li>
+
+            <li>
+                <a href="{% url 'logout' %}" class="nav-link logout-link" id="logoutNav" style="margin-top: 100px;">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span class="links_name">Logout</span>
+                </a>
+                <span class="tooltip">Logout</span>
+            </li>
+            
+            <!-- Add more navigation links as needed -->
+        </ul>
+    </div>
+    <div class="scrollable-container">
+    <div class="home-section active" id="pipelineSection">
+        <div class="text">Welcome DevOps Engineer!</div>
+        <button id="addPipelineBtn" class="btn-custom float-right " style="margin-top: 10px;" data-toggle="modal" data-target="#myModal">+ Add New Pipeline</button>        
+        <div id="myModal" class="modal fade" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Add Pipeline</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    {% if error %}
+                    <p style="color:red;">{{ error }}</p>
+                    {% endif %}
+                    <div class="modal-body">
+                        <form method="post" action="{% url 'pipeline_page' %}">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <label for="name">Pipeline Name:</label>
+                                <input type="text" id="name" name="name" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="jenkins_file">Jenkinsfile Content:</label>
+                                <textarea id="jenkins_file" name="jenkins_file" class="form-control" rows="10" required></textarea>
+                            </div>
+                            <button type="submit" class="btn-custom" name="add_pipeline">Create Pipeline</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-12">
+            <!-- Boucle pour afficher les pipelines -->
+            {% for pipeline in pipelines %}
+            <div class="card project-card">
+                <div class="card-header project-card-header">
+                    {{ pipeline.name }}    
+                </div>
+                <div class="card-body project-card-body">
+                    <div class="build-status mt-3">
+                        <strong>Build Status:</strong>
+                        <span id="build-status-{{ pipeline.name }}" class="badge badge-secondary">Loading...</span>
+                    </div>
+                    <form method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="pipeline_url" value="{{ pipeline.url }}">
+                        
+                        <button type="submit" name="build_now" class="btn-custom">Build Now</button>
+                        <a href="#" class="btn-custom btn-custom-console" data-pipeline-name="{{ pipeline.name }}">Console</a>
+                        <button type="submit" name="details" class="btn-custom" data-toggle="modal" data-target="#detailsModal{{ pipeline.name }}">Configure</button>                    
+                        <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#deleteModal{{ pipeline.name }}">
+                            <i class='bx bx-trash'></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+                        
+
+
+            <!-- Modal Structure -->
+            <div class="modal fade" id="logModal" tabindex="-1" role="dialog" aria-labelledby="logModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="logModalLabel">Pipeline Build Logs</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body" id="logModalBody">
+                            <!-- Logs will be injected here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    const pipelines = document.querySelectorAll('.card.project-card');
+                    
+                    pipelines.forEach(function(pipeline) {
+                        const pipelineName = pipeline.querySelector('.btn-custom-console').getAttribute('data-pipeline-name');
+                        const statusElement = document.getElementById(`build-status-${pipelineName}`);
+                        const url = `{% url 'jenkins_build_logs' 'pipelineName' %}`.replace('pipelineName', pipelineName);
+                
+                        // Fetch build status
+                        fetch(url)
+                            .then(response => response.json())
+                            .then(data => {
+                                // Update status badge
+                                if (data.build_status === 'SUCCESS') {
+                                    statusElement.className = 'badge badge-success';
+                                    statusElement.textContent = 'SUCCESS';
+                                } else if (data.build_status === 'FAILURE') {
+                                    statusElement.className = 'badge badge-danger';
+                                    statusElement.textContent = 'FAILURE';
+                                } else if (data.build_status === 'IN_PROGRESS') {
+                                    statusElement.className = 'badge badge-warning';
+                                    statusElement.textContent = 'IN_PROGRESS';
+                                } else {
+                                    statusElement.className = 'badge badge-secondary';
+                                    statusElement.textContent = data.build_status || 'UNKNOWN';
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error fetching build status:', error);
+                                statusElement.className = 'badge badge-secondary';
+                                statusElement.textContent = 'ERROR';
+                            });
+                    });
+                });
+                </script>
+                
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    document.querySelectorAll('.btn-custom-console').forEach(function(button) {
+                        button.addEventListener('click', function(event) {
+                            event.preventDefault(); // Prevent the default action of the link
+                            const pipelineName = this.getAttribute('data-pipeline-name');
+                            const url = `{% url 'jenkins_build_logs' 'pipelineName' %}`.replace('pipelineName', pipelineName);
+            
+                            // Make AJAX request
+                            fetch(url)
+                                .then(response => response.json())
+                                .then(data => {
+                                    // Populate modal with build logs
+                                    document.getElementById('logModalLabel').textContent = 'Build Logs for Pipeline: ' + pipelineName;
+                                    document.getElementById('logModalBody').innerHTML = `
+                                        <p>Build Status: ${data.build_status || 'Unknown'}</p>
+                                        <h2>Build Logs:</h2>
+                                        <pre>${data.build_logs || 'No logs available'}</pre>
+                                    `;
+                                    // Show the modal
+                                    $('#logModal').modal('show');
+                                })
+                                .catch(error => {
+                                    console.error('Error fetching build logs:', error);
+                                });
+                        });
+                    });
+                });
+            </script>
+
+
+            <!-- Modal for Details -->
+            {% if pipeline_details %}
+            <div class="modal fade" id="detailsModal" tabindex="-1" role="dialog" aria-labelledby="detailsModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="detailsModalLabel">Details for {{ pipeline.name }}</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <form method="post" action="{% url 'pipeline_page' %}">
+                                {% csrf_token %}
+                                
+                                <!-- Textarea for Jenkinsfile -->
+                                <div class="form-group">
+                                    <label for="jenkins_file">Jenkinsfile:</label>
+                                    <textarea id="jenkins_file" name="jenkins_file" rows="10" class="form-control">{{ pipeline_details.jenkins_file|safe }}</textarea>
+                                </div>
+
+                                <input type="hidden" name="pipeline_url" value="{{ pipeline_details.url }}">
+                                <input type="hidden" name="old_pipeline_name" value="{{ pipeline.name }}">
+
+                                <button type="submit" name="modify_pipeline" class="btn btn-primary">Modify</button>
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <script>
+                // Automatically show the modal when the page loads if there are pipeline details
+                document.addEventListener('DOMContentLoaded', function() {
+                    $('#detailsModal').modal('show');
+                });
+            </script>
+            {% endif %}
+            <!-- Delete Modal -->
+        <div class="modal fade" id="deleteModal{{ pipeline.name }}" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel{{ pipeline.name }}" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="deleteModalLabel{{ pipeline.name }}">Delete Pipeline</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Are you sure you want to delete the pipeline "{{ pipeline.name }}"?</p>
+                    </div>
+                    <div class="modal-footer">
+                        <form method="post">
+                            {% csrf_token %}
+                            <input type="hidden" name="delete_pipeline" value="delete_pipeline">
+                            <input type="hidden" name="pipeline_name" value="{{ pipeline.name }}">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-danger">Delete</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+            {% endfor %}
+
+
+
+        
+    </div>
+        
+        <!-- Edit Modal -->
+            <div id="editModal{{ pipeline.id }}" class="modal fade" tabindex="-1" role="dialog">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Edit Pipeline</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <form method="post">
+                                {% csrf_token %}
+                                <input type="hidden" name="update_pipeline" value="update_pipeline">
+                                <input type="hidden" name="pipeline_id" value="{{ pipeline.id }}">
+                                <div class="form-group">
+                                    <label for="name">Pipeline Name <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="name" name="name" value="{{ pipeline.name }}" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="jenkins_file">Jenkins File <span class="text-danger">*</span></label>
+                                    <textarea class="form-control" id="jenkins_file" name="jenkins_file" rows="4" required>{{ pipeline.jenkins_file }}</textarea>
+                                </div>
+                                <button type="submit" class="btn-custom">Save Changes</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            
+        </div>
+        <div class="home-section" id="userpipSection">
+            <div class="container-fluid">
+                <ul class="nav" id="myTab" role="tablist" >
+                    <li class="nav-item" style="margin-top: 30px;" >
+                        <a class="btn-custom active" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="true">Profile</a>
+                    </li>
+                    <li class="nav-item" style="margin-top: 30px;" >
+                        <a class="btn-custom" id="change-profilepip-tab" data-toggle="tab" href="#change-profilepip" role="tab" aria-controls="change-profilepip" aria-selected="false">Change Profile</a>
+                    </li>
+                    <li class="nav-item" style="margin-top: 30px;" >
+                        <a class="btn-custom" id="change-passwordpip-tab" data-toggle="tab" href="#change-passwordpip" role="tab" aria-controls="change-passwordpip" aria-selected="false">Change Password</a>
+                    </li>
+                </ul>
+                <div class="tab-content card" id="myTabContent" style="margin-top: 30px;" >
+                    <div class="tab-pane fade show active" id="profile" style="margin-left: 10px; margin-right: 10px; margin-top: 10px ; margin-block-end: 10px;" role="tabpanel" aria-labelledby="profile-tab">
+                        <p><strong>Username:</strong> {{ user.username }}</p>
+                        <p><strong>E-mail:</strong> {{ user.email }}</p>
+                        <p><strong>Role:</strong> {{ user.role }}</p>
+                    </div>
+                    <div class="tab-pane fade " id="change-profilepip" role="tabpanel" style="margin-left: 10px; margin-right: 10px; margin-top: 10px ; margin-block-end: 10px;" aria-labelledby="change-profilepip-tab">
+                        <form method="post" action="{% url 'update_profilepip' %}">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <label for="email">New E-mail:</label>
+                                <input type="email" class="form-control" id="email" name="email" value="{{ user.email }}" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="username">Username:</label>
+                                <input type="text" class="form-control" id="username" name="username" value="{{ user.username }}" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="role">Role:</label>
+                                <select class="form-control" id="role" name="role" required disabled>
+                                    <option value="admin" {% if user.role == 'admin' %}selected{% endif %}>Admin</option>
+                                    <option value="developer" {% if user.role == 'developer' %}selected{% endif %}>Developer</option>
+                                    <option value="devops" {% if user.role == 'devops' %}selected{% endif %}>Devops</option>
+                                    <option value="supervisor" {% if user.role == 'supervisor' %}selected{% endif %}>Supervisor</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-custom">Update Profile</button>
+                        </form>
+                    </div>
+                    <div class="tab-pane fade" id="change-passwordpip" style="margin-left: 10px; margin-right: 10px; margin-top: 10px ; margin-block-end: 10px;" role="tabpanel" aria-labelledby="change-passwordpip-tab">
+                        <form method="post" action="{% url 'update_passwordpip' %}">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <label for="current-password">Current Password:</label>
+                                <input type="password" class="form-control" id="current-password" name="current_password" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="new-password">New Password:</label>
+                                <input type="password" class="form-control" id="new-password" name="new_password" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="confirm-password">Confirm New Password:</label>
+                                <input type="password" class="form-control" id="confirm-password" name="confirm_password" required>
+                            </div>
+                            <button type="submit" class="btn btn-custom">Change Password</button>
+                        </form>
+                    </div>
+                </div>
+            </div>   
+         </div>
+        <div class="home-section" id="projectSection">
+            <div class="text">Project List</div>
+
+            {% for project in projects %}
+            <!-- Project Card -->
+            <div class="col-12">
+                <div class="card project-card">
+                    <div class="card-header project-card-header">
+                        <h5>{{ project.name }}</h5>
+                        <span class="badge 
+                            {% if project.status == 'In Progress' %}
+                                badge-warning
+                            {% elif project.status == 'Completed' %}
+                                badge-success
+                            {% elif project.status == 'On Hold' %}
+                                badge-secondary
+                            {% endif %}
+                        ">{{ project.status }}</span>
+                    </div>
+                    <div class="card-body project-card-body">
+                        <div>
+                            <p><strong>Url Github:</strong> {{ project.github_url }}</p>
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div id="serviceSection" class="home-section">
+            <div class="text">Your services</div>
+
+                <div class="services-section">
+                    <div class="containerr">
+                        {% for service in services %}
+                            <a href="{{ service.url }}" target="_blank">
+                                <div class="process-button">
+                                    <img src="{{ service.image.url }}" class="logo" alt="{{ service.nom }}" />
+                                    <span>{{ service.nom }}</span>
+                                </div>
+                            </a>
+                        {% endfor %}
+                    </div>
+                </div>
+                </div>
+                </div>
+        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+        
+        <script>
+            $(document).ready(function() {
+                // Function to handle navigation
+                function handleNavClick(targetSectionId, activeLinkId) {
+                    // Hide all sections
+                    $('#pipelineSection, #userpipSection, #projectSection , #serviceSection').removeClass('active');
+            
+                    // Show the target section
+                    $(targetSectionId).addClass('active');
+            
+                    // Remove active class from all nav links
+                    $('.nav-link').removeClass('active');
+            
+                    // Add active class to the clicked nav link
+                    $(activeLinkId).addClass('active');
+                }
+            
+                $('#pipeNav').on('click', function() {
+                    handleNavClick('#pipelineSection', '#pipeNav');
+                });
+            
+                $('#userpipNav').on('click', function() {
+                    handleNavClick('#userpipSection', '#userpipNav');
+                });
+            
+                $('#projectNav').on('click', function() {
+                    handleNavClick('#projectSection', '#projectNav');
+                });
+                $('#serNav').on('click', function() {
+                    handleNavClick('#serviceSection', '#serNav');
+                });
+            
+                // Optionally, trigger a click on the default link to show the default section
+                $('#pipeNav').click();
+            });
+            
+        </script>
+        </div>
+   </body>
+</html>
