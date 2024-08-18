@@ -80,7 +80,7 @@ DATABASES = {
         'NAME': '3Sdash',
         'USER': 'postgres',
         'PASSWORD': '139',
-        'HOST': 'postgres',  # ou l'adresse de votre serveur PostgreSQL
+        'HOST': 'postgres.dashpfe.svc.cluster.local',
         'PORT': '5432',       # ou le port de votre serveur PostgreSQL
     }
 }
