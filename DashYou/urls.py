@@ -30,7 +30,6 @@ urlpatterns = [
     path('update-password/', views.update_password, name='update_password'),
     path('pipeline/', views.pipeline_page, name='pipeline_page'),
     path('supervisor/', views.supervisor, name='supervisor'),
-    path('grafana/', views.get_grafana_url, name='grafana'),
     path('adminpage/', views.adminpage, name='adminpage'),
     path('update-profilepip/', views.update_profilepip, name='update_profilepip'),
     path('update-passwordpip/', views.update_passwordpip, name='update_passwordpip'),

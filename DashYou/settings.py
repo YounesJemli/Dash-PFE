@@ -76,11 +76,11 @@ WSGI_APPLICATION = 'DashYou.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': '3Sdash',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'dash3s',
         'USER': 'postgres',
         'PASSWORD': '139',
-        'HOST': 'postgres.dashpfe.svc.cluster.local',
+        'HOST': 'localhost',
         'PORT': '5432',       # ou le port de votre serveur PostgreSQL
     }
 }

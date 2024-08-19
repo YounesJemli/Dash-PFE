@@ -244,7 +244,7 @@ def extract_script_from_jenkinsfile(xml_content):
     return None
 
 def pipeline_page(request):
-    jenkins_url = 'http://localhost:8080'
+   # jenkins_url = 'http://localhost:8080'
     jenkins_user = 'younes'
     jenkins_token = '118ec39db7b8b9f556b2c36459e8658bb1'
     projects = Project.objects.all()
@@ -648,47 +648,3 @@ def user_logout(request):
     return HttpResponseRedirect('/')
 
 
-
-from django.http import HttpResponseRedirect, HttpResponse
-from kubernetes import client, config
-import logging
-
-def get_grafana_url(request):
-    try:
-        # Charge la configuration de Kubernetes
-        config.load_kube_config(config_file='/home/younes/.kube/config')
-        logging.info("Kubernetes configuration loaded successfully.")
-        
-        # Crée un client Kubernetes
-        v1 = client.CoreV1Api()
-        logging.info("Kubernetes client created.")
-
-        # Remplacez par le nom de votre namespace et service
-        namespace = 'monitoring'
-        service_name = 'grafana'
-        logging.info(f"Fetching service '{service_name}' in namespace '{namespace}'.")
-
-        # Récupère le service Grafana
-        service = v1.read_namespaced_service(service_name, namespace)
-        logging.info(f"Service '{service_name}' fetched successfully.")
-
-        # Construit l'URL Grafana
-        if service.status.load_balancer.ingress:
-            grafana_url = f"http://{service.status.load_balancer.ingress[0].ip}:{service.spec.ports[0].port}"
-            logging.info(f"Grafana URL constructed: {grafana_url}")
-
-            # Redirige l'utilisateur vers l'URL Grafana
-            return HttpResponseRedirect(grafana_url)
-        else:
-            logging.error("No ingress found for the service.")
-            return HttpResponse("No ingress found for the service.", status=500)
-    except Exception as e:
-        logging.error(f"An error occurred: {str(e)}")
-        return HttpResponse(f"An error occurred: {str(e)}", status=500)
-
-
-from django.shortcuts import render
-
-def dashboard_view(request):
-    grafana_url = get_grafana_url()
-    return render(request, 'supervisor.html', {'grafana_url': grafana_url})

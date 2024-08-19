@@ -22,7 +22,7 @@ COPY . /app/
 RUN pip install --no-cache-dir -r requirements.txt
 ENV DATABASE_HOST=postgres
 ENV DATABASE_PORT=5432
-ENV DATABASE_NAME=3Sdash
+ENV DATABASE_NAME=dash3s
 ENV DATABASE_USER=postgres
 ENV DATABASE_PASSWORD=139
 # Run migrations and start the server
