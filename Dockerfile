@@ -10,7 +10,6 @@ WORKDIR /app
 
 # Copy project files
 COPY . /app/
-RUN echo "nameserver 8.8.8.8" > /etc/resolv.conf
 
 RUN apt-get update && apt-get install -y \
     gcc \
