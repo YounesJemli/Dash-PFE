@@ -7,7 +7,7 @@ ENV PYTHONUNBUFFERED=1
 # Install dependencies
 RUN apt-get install -y \
     gcc \
-    python3-dev \
+    python3-all-dev \
     libpq-dev \
     && apt-get clean
 
