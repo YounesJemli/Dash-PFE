@@ -80,7 +80,7 @@ DATABASES = {
         'NAME': 'dash3s',
         'USER': 'postgres',
         'PASSWORD': '139',
-        'HOST': 'localhost',
+        'HOST': 'postgres',
         'PORT': '5432',       # ou le port de votre serveur PostgreSQL
     }
 }
