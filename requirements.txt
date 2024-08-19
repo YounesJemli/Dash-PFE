@@ -11,3 +11,4 @@ social-auth-app-django==5.0.0
 social-auth-core==4.3.0
 sqlparse==0.5.0
 jenkinsapi==0.3.13
+Pillow==9.0.1
