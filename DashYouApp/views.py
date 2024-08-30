@@ -246,7 +246,7 @@ def extract_script_from_jenkinsfile(xml_content):
     return None
 
 def pipeline_page(request):
-   # jenkins_url = 'http://localhost:8080'
+    jenkins_url = 'https://870e-197-25-175-210.ngrok-free.app'
     jenkins_user = 'younes'
     jenkins_token = '11a3480f35d3a1395e27c6de042c7d6ce2'
     projects = Project.objects.all()
@@ -506,7 +506,7 @@ import requests
 from django.http import JsonResponse
 
 def jenkins_build_logs(request, pipeline_name):
-    jenkins_url = 'http://localhost:8080'
+    jenkins_url = 'https://870e-197-25-175-210.ngrok-free.app'
     jenkins_user = 'younes'
     jenkins_token = '11a3480f35d3a1395e27c6de042c7d6ce2'
 
@@ -544,7 +544,7 @@ def jenkins_build_logs(request, pipeline_name):
 
 def adminpage(request):
 
-    jenkins_url = 'http://localhost:8080'
+    jenkins_url = 'https://870e-197-25-175-210.ngrok-free.app'
     jenkins_user = 'younes'
     jenkins_token = '11a3480f35d3a1395e27c6de042c7d6ce2'
     projects = Project.objects.all()
