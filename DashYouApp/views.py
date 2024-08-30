@@ -127,6 +127,8 @@ def authentication(request):
                     return redirect('pipeline_page')
                 elif user.role == 'supervisor':
                     return redirect('supervisor')    
+                elif user.role == 'admin':
+                    return redirect('adminpage')    
                 else:
                     return HttpResponse('Unauthorized', status=401)  # Handle unauthorized roles if needed
             else:
