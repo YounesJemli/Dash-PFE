@@ -246,9 +246,9 @@ def extract_script_from_jenkinsfile(xml_content):
     return None
 
 def pipeline_page(request):
-    jenkins_url = 'https://225a-197-26-40-53.ngrok-free.app/'
+    jenkins_url = 'https://cd21-197-25-179-87.ngrok-free.app'
     jenkins_user = 'younes'
-    jenkins_token = '11c7dce60e7d70c3f6570035629e806c17'
+    jenkins_token = '11fd2771c4c65fb73e098ab6620a59b161'
     projects = Project.objects.all()
 
     if not jenkins_user or not jenkins_token:
@@ -506,9 +506,9 @@ import requests
 from django.http import JsonResponse
 
 def jenkins_build_logs(request, pipeline_name):
-    jenkins_url = 'https://225a-197-26-40-53.ngrok-free.app/'
+    jenkins_url = 'https://cd21-197-25-179-87.ngrok-free.app'
     jenkins_user = 'younes'
-    jenkins_token = '11c7dce60e7d70c3f6570035629e806c17'
+    jenkins_token = '11fd2771c4c65fb73e098ab6620a59b161'
 
     build_url = f"{jenkins_url}/job/{pipeline_name}/lastBuild/api/json"
     
@@ -544,9 +544,9 @@ def jenkins_build_logs(request, pipeline_name):
 
 def adminpage(request):
 
-    jenkins_url = 'https://225a-197-26-40-53.ngrok-free.app/'
+    jenkins_url = 'https://cd21-197-25-179-87.ngrok-free.app'
     jenkins_user = 'younes'
-    jenkins_token = '11c7dce60e7d70c3f6570035629e806c17'
+    jenkins_token = '11fd2771c4c65fb73e098ab6620a59b161'
     projects = Project.objects.all()
 
     if not jenkins_user or not jenkins_token:
