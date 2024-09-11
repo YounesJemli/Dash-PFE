@@ -283,7 +283,7 @@ def pipeline_page(request):
                     'error': 'Pipeline URL is required.'
                 })
 
-            jenkinsfile_response = requests.get(f'{pipeline_url}/config.xml', auth=(jenkins_user, jenkins_token))
+            jenkinsfile_response = requests.get(f'{pipeline_url}config.xml', auth=(jenkins_user, jenkins_token))
             if jenkinsfile_response.status_code != 200:
                 return HttpResponse(f'Failed to fetch Jenkinsfile: {jenkinsfile_response.status_code} {jenkinsfile_response.text}')
 
@@ -350,7 +350,7 @@ def pipeline_page(request):
 
             # Mise à jour du contenu du Jenkinsfile
             modify_response = requests.post(
-                f'{pipeline_url}/config.xml',
+                f'{pipeline_url}config.xml',
                 data=f"""<?xml version='1.1' encoding='UTF-8'?>
         <flow-definition plugin="workflow-job@1400.v7fd111b_ec82f">
         <actions>
