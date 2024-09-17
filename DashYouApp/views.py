@@ -447,7 +447,7 @@ def pipeline_page(request):
                             build_number = queue_data['executable']['number']
                             build_url = f"{pipeline_url}/{build_number}/api/json"
                             break
-                    time.sleep(1)  # Wait 1 second before checking again
+                    time.sleep(1) 
 
                 build_logs = None
                 build_status = None
