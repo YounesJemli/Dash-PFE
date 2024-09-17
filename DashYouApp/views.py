@@ -136,11 +136,6 @@ def authentication(request):
 
     return render(request, 'login.html')
 
-def list_users(request):
-    users = Admin3s.objects.all()
-    return render(request, 'list_users.html', {'users': users})
-
-
 def developper(request):
     if request.method == 'POST':
         if 'add_project' in request.POST:
