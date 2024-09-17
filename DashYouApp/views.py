@@ -130,7 +130,7 @@ def authentication(request):
                 elif user.role == 'admin':
                     return redirect('adminpage')    
                 else:
-                    return HttpResponse('Unauthorized', status=401)  # Handle unauthorized roles if needed
+                    return HttpResponse('Unauthorized', status=401)  
             else:
                 return render(request, 'login.html', {'error': 'Invalid username or password'})
 
@@ -153,7 +153,7 @@ def developper(request):
                 status=status,
                 user=request.user
             )
-            return redirect('developper')  # Redirection vers la page d'accueil
+            return redirect('developper') 
 
         elif 'update_project' in request.POST:
             project_id = request.POST.get('project_id')
@@ -165,7 +165,7 @@ def developper(request):
             project.status = request.POST.get('status')
             project.save()
 
-            return redirect('developper')  # Redirection vers la page d'accueil
+            return redirect('developper') 
 
         elif 'delete_project' in request.POST:
             project_id = request.POST.get('project_id')
@@ -173,14 +173,14 @@ def developper(request):
             if project.user == request.user or request.user.is_superuser:
                 project.delete()
 
-            return redirect('developper')  # Redirection vers la page d'accueil
+            return redirect('developper') 
 
     services = Service.objects.filter(role='developer')
     projects = Project.objects.all()
     
     return render(request, 'developper.html', {
         'projects': projects,
-        'services': services  # Passez les services filtrés au template
+        'services': services  
     })
 
 def supervisor(request):
@@ -343,7 +343,7 @@ def pipeline_page(request):
                     'error': 'Pipeline URL is required.'
                 })
 
-            # Mise à jour du contenu du Jenkinsfile
+           
             modify_response = requests.post(
                 f'{pipeline_url}config.xml',
                 data=f"""<?xml version='1.1' encoding='UTF-8'?>
@@ -391,7 +391,7 @@ def pipeline_page(request):
                     'error': 'Pipeline name is required.'
                 })
 
-            # Find the pipeline URL by its name
+           
             pipeline = next((p for p in pipelines if p['name'] == pipeline_name), None)
             if not pipeline:
                 return render(request, 'pipeline_page.html', {
@@ -399,7 +399,6 @@ def pipeline_page(request):
                     'error': 'Pipeline not found.'
                 })
 
-            # Delete pipeline
             delete_response = requests.post(
                 f'{pipeline["url"]}/doDelete',
                 auth=(jenkins_user, jenkins_token),
@@ -424,7 +423,7 @@ def pipeline_page(request):
                     'error': 'Pipeline URL is required.'
                 })
 
-            # Trigger the build
+           
             build_response = requests.post(
                 f'{pipeline_url}/build',
                 auth=(jenkins_user, jenkins_token),
@@ -432,7 +431,6 @@ def pipeline_page(request):
             )
 
             if build_response.status_code == 201:
-                # Get the queue URL
                 queue_url = build_response.headers.get('Location')
                 if not queue_url:
                     return render(request, 'pipeline_page.html', {
@@ -440,7 +438,6 @@ def pipeline_page(request):
                         'error': 'Failed to obtain queue URL.'
                     })
 
-                # Wait for the build to start and get the build URL
                 build_url = None
                 while True:
                     queue_response = requests.get(f'{queue_url}/api/json', auth=(jenkins_user, jenkins_token))
@@ -452,7 +449,6 @@ def pipeline_page(request):
                             break
                     time.sleep(1)  # Wait 1 second before checking again
 
-                # Poll for build completion and fetch logs
                 build_logs = None
                 build_status = None
                 while True:
@@ -571,14 +567,14 @@ def adminpage(request):
             user_id = request.POST.get('user_id')
             user = get_object_or_404(Admin3s, id=user_id)
             user.delete()
-            return redirect('adminpage')  # Redirect to avoid form resubmission
+            return redirect('adminpage') 
         
         elif 'toggle_status' in request.POST:
             user_id = request.POST.get('user_id')
             user = get_object_or_404(Admin3s, id=user_id)
             user.is_active = not user.is_active
             user.save()
-            return redirect('adminpage')  # Redirect to avoid form resubmission
+            return redirect('adminpage') 
 
         elif 'add_user' in request.POST:
             username = request.POST.get('username')
@@ -586,18 +582,17 @@ def adminpage(request):
             password = request.POST.get('password')
 
             role = request.POST.get('role')
-            # On ignore la case "is_active", on la met à True par défaut
             user = Admin3s.objects.create_user(username=username, email=email, password=password, role=role)
-            return redirect('adminpage')  # Redirect to avoid form resubmission
+            return redirect('adminpage') 
 
         if 'add_service' in request.POST:
             nom = request.POST.get('nom')
-            image = request.FILES.get('image')  # Obtenir le fichier téléchargé
+            image = request.FILES.get('image') 
             url = request.POST.get('url')
             role = request.POST.get('role')
             # Créez une instance de Service
             Service.objects.create(nom=nom, image=image, url=url, role=role)
-            return redirect('adminpage')  # Rediriger pour éviter la resoumission du formulaire
+            return redirect('adminpage') 
 
         elif 'delete_service' in request.POST:
             service_id = request.POST.get('service_id')
@@ -610,17 +605,16 @@ def adminpage(request):
         'users': users,
         'projects': projects,
         'pipelines': pipelines,
-        'services': services  # Passez les services au template
+        'services': services  
     })
         
 
 
 def manage_services(request):
     if request.method == 'POST':
-        # Ajouter un service
         if 'add_service' in request.POST:
-            name = request.POST.get('service_name')  # Correspond au nom du champ dans le formulaire
-            description = request.POST.get('service_description')  # Correspond au nom du champ dans le formulaire
+            name = request.POST.get('service_name')  
+            description = request.POST.get('service_description')  
             print("Received: name={name}, description={description}")
             if name:
                 Admin3s.objects.create(name=name, description=description)
@@ -628,14 +622,12 @@ def manage_services(request):
             else:
                 messages.error(request, 'Name is required!')
 
-        # Supprimer un service
         elif 'delete_service' in request.POST:
             service_id = request.POST.get('service_id')
             service = get_object_or_404(Admin3s, id=service_id)
             service.delete()
             messages.success(request, 'Service deleted successfully!')
 
-    # Afficher la liste des services
     services = Admin3s.objects.all()
     return render(request, 'adminpage.html', {'services':services})
 
