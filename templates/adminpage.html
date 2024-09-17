@@ -179,26 +179,25 @@
         <div class="home-section " id="pipelineSection">
           <div class="text">Pipeline List</div>
           <div class="col-12">
-                <!-- Boucle pour afficher les pipelines -->
                 {% for pipeline in pipelines %}
-          <div class="card project-card">
-              <div class="card-header project-card-header">
-                  {{ pipeline.name }}    
-              </div>
-              <div class="card-body project-card-body">
-                  <div class="build-status mt-3">
-                      <strong>Build Status:</strong>
-                      <span id="build-status-{{ pipeline.name }}" class="badge badge-secondary">Loading...</span>
-                  </div>
-                  <form method="post">
-                      {% csrf_token %}
-                      <input type="hidden" name="pipeline_url" value="{{ pipeline.url }}">
-                      
-                      <a href="#" class="btn-custom btn-custom-console" data-pipeline-name="{{ pipeline.name }}">Console</a>
-                      
-                  </form>
-              </div>
-          </div>
+                <div class="card project-card">
+                    <div class="card-header project-card-header">
+                        {{ pipeline.name }}    
+                    </div>
+                    <div class="card-body project-card-body">
+                        <div class="build-status mt-3">
+                            <strong>Build Status:</strong>
+                            <span id="build-status-{{ pipeline.name }}" class="badge badge-secondary">Loading...</span>
+                        </div>
+                        <form method="post">
+                            {% csrf_token %}
+                            <input type="hidden" name="pipeline_url" value="{{ pipeline.url }}">
+                            
+                            <a href="#" class="btn-custom btn-custom-console" data-pipeline-name="{{ pipeline.name }}">Console</a>
+                            
+                        </form>
+                    </div>
+                </div>
 
                       
 
@@ -265,18 +264,18 @@
                             const pipelineName = this.getAttribute('data-pipeline-name');
                             const url = `{% url 'jenkins_build_logs' 'pipelineName' %}`.replace('pipelineName', pipelineName);
             
-                            // Make AJAX request
+                          
                             fetch(url)
                                 .then(response => response.json())
                                 .then(data => {
-                                    // Populate modal with build logs
+                                    
                                     document.getElementById('logModalLabel').textContent = 'Build Logs for Pipeline: ' + pipelineName;
                                     document.getElementById('logModalBody').innerHTML = `
                                         <p>Build Status: ${data.build_status || 'Unknown'}</p>
                                         <h2>Build Logs:</h2>
                                         <pre>${data.build_logs || 'No logs available'}</pre>
                                     `;
-                                    // Show the modal
+                                   
                                     $('#logModal').modal('show');
                                 })
                                 .catch(error => {
@@ -295,7 +294,7 @@
           <div class="text">Project List</div>
 
           {% for project in projects %}
-          <!-- Project Card -->
+        
           <div class="col-12">
               <div class="card project-card">
                   <div class="card-header project-card-header">
@@ -326,9 +325,7 @@
         <div class="text">Manage Users</div>
         <button class="btn-custom float-right " data-bs-toggle="modal" style="margin-top: 10px;" data-toggle="modal" data-target="#addUserModal">Add User</button>
         <div class="card user-card">
-            <!-- Table Wrapper -->
             <div class="table-user-wrapper">
-                <!-- Table -->
                 <table class="table table-user table-bordered mt-3">
                     <thead>
                         <tr>
@@ -472,14 +469,12 @@
               <div class="containerr">
                   {% for service in services %}
                   <div class="service-item" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px;">
-                      <!-- Lien vers le service -->
                       <a href="{{ service.url }}" target="_blank" style="flex-grow: 1; text-decoration: none;">
                           <div class="process-button" style="display: flex; align-items: center; justify-content: space-between; width: 50%;">
                               <div style="display: flex; align-items: center;">
                                   <img src="{{ service.image.url }}" class="logo" alt="{{ service.nom }}" style="margin-right: 10px;" />
                                   <span>{{ service.nom }}</span>
                               </div>
-                              <!-- Formulaire de suppression -->
                               <form method="post" action="" class="delete-form" style="margin-left: 10px;">
                                   {% csrf_token %}
                                   <input type="hidden" name="service_id" value="{{ service.id }}">
@@ -497,7 +492,6 @@
       
       
       
-         <!-- Modal -->
          <div class="modal fade" id="addServiceModal" tabindex="-1" role="dialog" aria-labelledby="addServiceModalLabel" aria-hidden="true">
           <div class="modal-dialog" role="document">
               <div class="modal-content">
@@ -553,18 +547,12 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script>
       $(document).ready(function() {
-          // Function to handle navigation
           function handleNavClick(targetSectionId, activeLinkId) {
-              // Hide all sections
               $('#pipelineSection, #userSection, #projectSection , #serviceSection').removeClass('active');
-      
-              // Show the target section
               $(targetSectionId).addClass('active');
       
-              // Remove active class from all nav links
               $('.nav-link').removeClass('active');
       
-              // Add active class to the clicked nav link
               $(activeLinkId).addClass('active');
           }
       
@@ -583,7 +571,6 @@
               handleNavClick('#serviceSection', '#serNav');
           });
       
-          // Optionally, trigger a click on the default link to show the default section
           $('#pipeNav').click();
       });
       
