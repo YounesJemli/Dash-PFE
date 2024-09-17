@@ -50,7 +50,7 @@ class Project(models.Model):
     github_url = models.URLField()
     languages = models.TextField()
     status = models.CharField(max_length=20, choices=STATUS_CHOICES)
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)  # Associe chaque projet à un utilisateur
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE) 
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
